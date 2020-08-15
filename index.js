@@ -1,12 +1,12 @@
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
 const mongoose = require("mongoose");
 
 // Mongoose connect
 mongoose.connect(process.env.MONGO_URL, {
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
 });
 
 const app = express();
@@ -18,13 +18,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Api route.
-const apiAuthRoute = require('./api/routes/auth.route');
+const apiAuthRoute = require("./api/routes/auth.route");
 
 // Define route api.
-app.use('/api/auth', apiAuthRoute);
+app.use("/api/auth", apiAuthRoute);
 
-app.get('/', (req, res) => {
-  res.send('Hello Ha Tien va Thuy Dung');
+app.get("/", (req, res) => {
+  res.send("Hello Ha Tien va Thuy Dung");
 });
 
 app.listen(port, () => {
