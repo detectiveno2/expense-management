@@ -5,6 +5,7 @@ const User = require('../models/user.model');
 const {
 	BAD_REQUEST_STATUS,
 	CREATED_STATUS,
+	OK_STATUS,
 } = require('../constants/httpStatus.constant');
 
 module.exports.postRegister = async (req, res) => {
@@ -39,6 +40,30 @@ module.exports.postRegister = async (req, res) => {
 	return res.status(CREATED_STATUS).json({ token, user });
 };
 
-module.exports.postLogin = (req, res) => {
-	res.json(req.body);
+module.exports.postLogin = async (req, res) => {
+	const { email, password } = req.body;
+
+	//Check user
+	const matchedUser = await User.findOne({ email });
+	if (!matchedUser) {
+		return res.status(BAD_REQUEST_STATUS).send('Email does not exist.');
+	}
+
+	//Check password
+	const comparePassword = bcrypt.compare(password, matchedUser.password);
+	if (!comparePassword) {
+		return res.status(BAD_REQUEST_STATUS).send('Wrong password.');
+	}
+
+	const user = {
+		email: matchedUser.email,
+		password: matchedUser.password,
+		userName: matchedUser.userName,
+		wallets: matchedUser.wallets,
+	};
+
+	// Generate token
+	const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+
+	return res.status(OK_STATUS).json({ token, user });
 };
