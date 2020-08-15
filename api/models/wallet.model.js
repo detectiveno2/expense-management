@@ -7,8 +7,9 @@ const walletSchema = new Schema({
   owner: { type: Schema.Types.ObjectId, ref: "User" },
   transactions: [
     {
-      expense: Number,
-      isIncome: Boolean,
+      expense: { type: Number, required: true },
+      isIncome: { type: Boolean, required: true },
+      date: { type: Date, required: true, default: Date.now },
       title: String,
       description: String,
     },
