@@ -11,9 +11,9 @@ module.exports.postRegister = async (req, res) => {
 	const { email, password } = req.body;
 
 	//Check if the user exists
-	const existingUser = User.findOne({ email });
+	const existingUser = await User.findOne({ email });
 	if (existingUser) {
-		res.status(BAD_REQUEST_STATUS).send('User has already exists');
+		return res.status(BAD_REQUEST_STATUS).send('User has already exists');
 	}
 
 	//Get user name
