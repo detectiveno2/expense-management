@@ -56,7 +56,10 @@ module.exports.postLogin = async (req, res) => {
 	}
 
 	const user = {
-		...matchedUser,
+		email: matchedUser.email,
+		password: matchedUser.password,
+		userName: matchedUser.userName,
+		wallets: matchedUser.wallets,
 	};
 
 	// Generate token
