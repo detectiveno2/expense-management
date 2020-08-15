@@ -1,5 +1,11 @@
-const User = require('../models/user.model');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+
+const User = require('../models/user.model');
+const {
+	BAD_REQUEST_STATUS,
+	CREATED_STATUS,
+} = require('../constants/httpStatus.constant');
 
 module.exports.postRegister = async (req, res) => {
 	const { email, password } = req.body;
@@ -7,7 +13,7 @@ module.exports.postRegister = async (req, res) => {
 	//Check if the user exists
 	const existingUser = User.findOne({ email });
 	if (existingUser) {
-		res.status(401).send('User has already exists');
+		res.status(BAD_REQUEST_STATUS).send('User has already exists');
 	}
 
 	//Get user name
@@ -27,7 +33,10 @@ module.exports.postRegister = async (req, res) => {
 	};
 	User.create(user);
 
-	return { user };
+	// Generate token
+	const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+
+	return res.status(CREATED_STATUS).json({ token, user });
 };
 
 module.exports.postLogin = (req, res) => {
