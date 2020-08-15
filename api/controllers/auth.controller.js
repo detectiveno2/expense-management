@@ -21,7 +21,7 @@ module.exports.postRegister = async (req, res) => {
 	//create new user
 	const user = {
 		email,
-		password,
+		password: hashedPassword,
 		userName,
 		wallets: [],
 	};
