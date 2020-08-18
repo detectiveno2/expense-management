@@ -6,7 +6,7 @@ const userSchema = new Schema({
 	email: String,
 	userName: { type: String, required: true },
 	password: String,
-	socialID: String,
+	socialId: String,
 	wallets: [
 		{
 			id: { type: Schema.Types.ObjectId, ref: 'Wallet' },

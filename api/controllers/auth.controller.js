@@ -70,15 +70,15 @@ module.exports.postLogin = async (req, res) => {
 };
 
 module.exports.facebook = async (req, res) => {
-	const { userName, userID } = req.body;
+	const { userName, userId } = req.body;
 
 	//Check user
-	const matchedUser = await User.findOne({ socialID: userID });
+	const matchedUser = await User.findOne({ socialId: userId });
 	if (!matchedUser) {
 		//create new user
 		const user = {
 			userName,
-			socialID: userID,
+			socialId: userId,
 			wallets: [],
 		};
 		User.create(user);
@@ -90,8 +90,42 @@ module.exports.facebook = async (req, res) => {
 	}
 
 	const user = {
-		userName,
-		socialID: matchedUser.socialID,
+		userName: matchedUser.userName,
+		socialId: matchedUser.socialId,
+		wallets: matchedUser.wallets,
+	};
+
+	// Generate token
+	const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+
+	return res.status(OK_STATUS).json({ token, user });
+};
+
+module.exports.google = async (req, res) => {
+	const { userName, userId, email } = req.body;
+
+	//Check user
+	const matchedUser = await User.findOne({ socialId: userId });
+	if (!matchedUser) {
+		//create new user
+		const user = {
+			email,
+			userName,
+			socialId: userId,
+			wallets: [],
+		};
+		User.create(user);
+
+		// Generate token
+		const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+
+		return res.status(CREATED_STATUS).json({ token, user });
+	}
+
+	const user = {
+		email: matchedUser.email,
+		userName: matchedUser.userName,
+		socialId: matchedUser.socialId,
 		wallets: matchedUser.wallets,
 	};
 
