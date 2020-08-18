@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
 
 const User = require('../models/user.model');
 const {
@@ -59,6 +60,38 @@ module.exports.postLogin = async (req, res) => {
 		email: matchedUser.email,
 		password: matchedUser.password,
 		userName: matchedUser.userName,
+		wallets: matchedUser.wallets,
+	};
+
+	// Generate token
+	const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+
+	return res.status(OK_STATUS).json({ token, user });
+};
+
+module.exports.facebook = async (req, res) => {
+	const { userName, userID } = req.body;
+
+	//Check user
+	const matchedUser = await User.findOne({ socialID: userID });
+	if (!matchedUser) {
+		//create new user
+		const user = {
+			userName,
+			socialID: userID,
+			wallets: [],
+		};
+		User.create(user);
+
+		// Generate token
+		const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+
+		return res.status(CREATED_STATUS).json({ token, user });
+	}
+
+	const user = {
+		userName,
+		socialID: matchedUser.socialID,
 		wallets: matchedUser.wallets,
 	};
 
