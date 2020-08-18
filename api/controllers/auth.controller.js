@@ -70,15 +70,15 @@ module.exports.postLogin = async (req, res) => {
 };
 
 module.exports.facebook = async (req, res) => {
-	const { userName, userID } = req.body;
+	const { userName, userId } = req.body;
 
 	//Check user
-	const matchedUser = await User.findOne({ socialID: userID });
+	const matchedUser = await User.findOne({ socialId: userId });
 	if (!matchedUser) {
 		//create new user
 		const user = {
 			userName,
-			socialID: userID,
+			socialId: userId,
 			wallets: [],
 		};
 		User.create(user);
@@ -91,7 +91,7 @@ module.exports.facebook = async (req, res) => {
 
 	const user = {
 		userName: matchedUser.userName,
-		socialID: matchedUser.socialID,
+		socialId: matchedUser.socialId,
 		wallets: matchedUser.wallets,
 	};
 
@@ -102,16 +102,16 @@ module.exports.facebook = async (req, res) => {
 };
 
 module.exports.google = async (req, res) => {
-	const { userName, userID, email } = req.body;
+	const { userName, userId, email } = req.body;
 
 	//Check user
-	const matchedUser = await User.findOne({ socialID: userID });
+	const matchedUser = await User.findOne({ socialId: userId });
 	if (!matchedUser) {
 		//create new user
 		const user = {
 			email,
 			userName,
-			socialID: userID,
+			socialId: userId,
 			wallets: [],
 		};
 		User.create(user);
@@ -125,7 +125,7 @@ module.exports.google = async (req, res) => {
 	const user = {
 		email: matchedUser.email,
 		userName: matchedUser.userName,
-		socialID: matchedUser.socialID,
+		socialId: matchedUser.socialId,
 		wallets: matchedUser.wallets,
 	};
 
