@@ -90,7 +90,41 @@ module.exports.facebook = async (req, res) => {
 	}
 
 	const user = {
-		userName,
+		userName: matchedUser.userName,
+		socialID: matchedUser.socialID,
+		wallets: matchedUser.wallets,
+	};
+
+	// Generate token
+	const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+
+	return res.status(OK_STATUS).json({ token, user });
+};
+
+module.exports.google = async (req, res) => {
+	const { userName, userID, email } = req.body;
+
+	//Check user
+	const matchedUser = await User.findOne({ socialID: userID });
+	if (!matchedUser) {
+		//create new user
+		const user = {
+			email,
+			userName,
+			socialID: userID,
+			wallets: [],
+		};
+		User.create(user);
+
+		// Generate token
+		const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+
+		return res.status(CREATED_STATUS).json({ token, user });
+	}
+
+	const user = {
+		email: matchedUser.email,
+		userName: matchedUser.userName,
 		socialID: matchedUser.socialID,
 		wallets: matchedUser.wallets,
 	};
