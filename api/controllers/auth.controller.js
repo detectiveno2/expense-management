@@ -51,7 +51,7 @@ module.exports.postLogin = async (req, res) => {
 	}
 
 	//Check password
-	const comparePassword = bcrypt.compare(password, matchedUser.password);
+	const comparePassword = await bcrypt.compare(password, matchedUser.password);
 	if (!comparePassword) {
 		return res.status(BAD_REQUEST_STATUS).send('Wrong password.');
 	}
