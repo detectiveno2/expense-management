@@ -38,7 +38,10 @@ module.exports.postRegister = async (req, res) => {
 	// Generate token
 	const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
 
-	return res.status(CREATED_STATUS).json({ token, user });
+	// Generate user for local
+	const localUser = { email, userName };
+
+	return res.status(CREATED_STATUS).json({ token, localUser });
 };
 
 module.exports.postLogin = async (req, res) => {
@@ -66,7 +69,13 @@ module.exports.postLogin = async (req, res) => {
 	// Generate token
 	const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
 
-	return res.status(OK_STATUS).json({ token, user });
+	// Generate user for local
+	const localUser = {
+		email: matchedUser.email,
+		userName: matchedUser.userName,
+	};
+
+	return res.status(OK_STATUS).json({ token, localUser });
 };
 
 module.exports.facebook = async (req, res) => {
@@ -86,7 +95,10 @@ module.exports.facebook = async (req, res) => {
 		// Generate token
 		const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
 
-		return res.status(CREATED_STATUS).json({ token, user });
+		// Generate user for local
+		const localUser = { userName };
+
+		return res.status(CREATED_STATUS).json({ token, localUser });
 	}
 
 	const user = {
@@ -98,7 +110,10 @@ module.exports.facebook = async (req, res) => {
 	// Generate token
 	const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
 
-	return res.status(OK_STATUS).json({ token, user });
+	// Generate user for local
+	const localUser = { userName: matchedUser.userName };
+
+	return res.status(OK_STATUS).json({ token, localUser });
 };
 
 module.exports.google = async (req, res) => {
@@ -119,7 +134,10 @@ module.exports.google = async (req, res) => {
 		// Generate token
 		const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
 
-		return res.status(CREATED_STATUS).json({ token, user });
+		// Generate user for local
+		const localUser = { email, userName };
+
+		return res.status(CREATED_STATUS).json({ token, localUser });
 	}
 
 	const user = {
@@ -132,5 +150,11 @@ module.exports.google = async (req, res) => {
 	// Generate token
 	const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
 
-	return res.status(OK_STATUS).json({ token, user });
+	// Generate user for local
+	const localUser = {
+		email: matchedUser.email,
+		userName: matchedUser.userName,
+	};
+
+	return res.status(OK_STATUS).json({ token, localUser });
 };
