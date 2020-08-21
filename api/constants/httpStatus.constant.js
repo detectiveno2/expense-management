@@ -1,6 +1,7 @@
 //200
 module.exports.OK_STATUS = 200;
 module.exports.CREATED_STATUS = 201;
+module.exports.NO_CONTENT_STATUS = 204;
 
 //400
 module.exports.BAD_REQUEST_STATUS = 400;
