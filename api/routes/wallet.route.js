@@ -4,4 +4,4 @@ const walletController = require('../controllers/');
 
 router.get('/', walletController.index);
 
-exports.default = router;
+module.exports = router;
