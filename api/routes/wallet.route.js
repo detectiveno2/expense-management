@@ -1,7 +1,7 @@
 const router = require('express').Router();
 
-const walletController = require('../controllers/');
+const walletController = require('../controllers/wallet.controller');
 
 router.get('/:ownerId', walletController.index);
 
-exports.default = router;
+module.exports = router;
