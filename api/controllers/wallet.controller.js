@@ -13,7 +13,7 @@ module.exports.index = async (req, res) => {
 
 	const wallet = await Wallet.find({ owner: ownerOfWaller._id });
 
-	if (!waller) {
+	if (!wallet) {
 		res.status(NOT_FOUND_STATUS).send('Wallet not found');
 		return;
 	}
