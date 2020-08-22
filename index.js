@@ -26,7 +26,7 @@ const authMiddleWare = require('./api/middlewares/auth.middleware');
 
 // Define route api.
 app.use('/api/auth', apiAuthRoute);
-app.use('/api/wallet', authMiddleWare, apiWalletRoute);
+app.use('/api/wallet', authMiddleWare.checkAuth, apiWalletRoute);
 
 app.get('/', (req, res) => {
 	res.send('Hello Ha Tien va Thuy Dung');
