@@ -2,6 +2,6 @@ const router = require('express').Router();
 
 const controller = require('../controllers/wallet.controller');
 
-router.get('/', walletController.index);
+router.get('/', controller.index);
 
 module.exports = router;

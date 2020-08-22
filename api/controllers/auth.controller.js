@@ -1,13 +1,17 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const mongoose = require('mongoose');
 
 const User = require('../models/user.model');
 const {
 	BAD_REQUEST_STATUS,
 	CREATED_STATUS,
 	OK_STATUS,
+	NO_CONTENT_STATUS,
 } = require('../constants/httpStatus.constant');
+
+module.exports.index = async (req, res) => {
+	return res.sendStatus(NO_CONTENT_STATUS);
+};
 
 module.exports.postRegister = async (req, res) => {
 	const { email, password } = req.body;
