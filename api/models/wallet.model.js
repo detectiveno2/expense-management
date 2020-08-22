@@ -17,6 +17,6 @@ const walletSchema = new Schema({
 	accountBalance: { type: Number, default: 0 },
 });
 
-const Wallet = mongoose.model('Wallet', userSchema, 'wallets');
+const Wallet = mongoose.model('Wallet', walletSchema, 'wallets');
 
 module.exports = Wallet;
