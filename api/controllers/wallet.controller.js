@@ -1,4 +1,5 @@
 const Wallet = require('../models/wallet.model');
+const User = require('../models/user.model');
 
 const {
 	OK_STATUS,
@@ -7,7 +8,10 @@ const {
 
 module.exports.index = async (req, res) => {
 	const { user } = req;
-	const wallet = await Wallet.find({ owner: user.owner });
+
+	const ownerOfWaller = await User.find({ email: user.email });
+
+	const wallet = await Wallet.find({ owner: ownerOfWaller._id });
 
 	if (!waller) {
 		res.status(NOT_FOUND_STATUS).send('Wallet not found');
