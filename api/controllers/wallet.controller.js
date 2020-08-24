@@ -28,6 +28,7 @@ module.exports.addWallet = async (req, res) => {
 	const newWallet = {
 		walletName,
 		owner,
+		transactions: [],
 	};
 
 	// insert new wallet
