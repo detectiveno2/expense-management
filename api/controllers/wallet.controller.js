@@ -37,5 +37,16 @@ module.exports.addWallet = async (req, res) => {
 	// find the wallet just created
 	const wallet = await Wallet.find({ walletName });
 
+	await User.update(
+		{
+			_id: owner,
+		},
+		{
+			$push: {
+				wallets: wallet,
+			},
+		}
+	);
+
 	res.status(CREATED_STATUS).send(wallet);
 };
