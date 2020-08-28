@@ -23,11 +23,12 @@ module.exports.index = async (req, res) => {
 };
 
 module.exports.addWallet = async (req, res) => {
-	const { walletName, owner } = req.body;
+	const { walletName } = req.body;
+	const { _id } = req.user;
 
 	const newWallet = {
 		walletName,
-		owner,
+		owner: _id,
 		transactions: [],
 	};
 
@@ -39,7 +40,7 @@ module.exports.addWallet = async (req, res) => {
 
 	await User.update(
 		{
-			_id: owner,
+			_id: _id,
 		},
 		{
 			$push: {
