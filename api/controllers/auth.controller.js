@@ -37,10 +37,12 @@ module.exports.postRegister = async (req, res) => {
 		userName,
 		wallets: [],
 	};
-	User.create(user);
+	// Get _id from created user to create payload.
+	const { _id } = await User.create(user);
 
 	// Generate token
-	const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+	const payload = { _id, ...user };
+	const token = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);
 
 	// Generate user for local
 	const localUser = { email, userName };
@@ -63,7 +65,8 @@ module.exports.postLogin = async (req, res) => {
 		return res.status(BAD_REQUEST_STATUS).send('Wrong password.');
 	}
 
-	const user = {
+	const payload = {
+		_id: matchedUser._id,
 		email: matchedUser.email,
 		password: matchedUser.password,
 		userName: matchedUser.userName,
@@ -71,7 +74,7 @@ module.exports.postLogin = async (req, res) => {
 	};
 
 	// Generate token
-	const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+	const token = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);
 
 	// Generate user for local
 	const localUser = {
@@ -94,10 +97,13 @@ module.exports.facebook = async (req, res) => {
 			socialId: userId,
 			wallets: [],
 		};
-		User.create(user);
+
+		// Get _id from createdUser to generate payload
+		const { _id } = await User.create(user);
 
 		// Generate token
-		const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+		const payload = { _id, ...user };
+		const token = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);
 
 		// Generate user for local
 		const localUser = { userName };
@@ -105,14 +111,15 @@ module.exports.facebook = async (req, res) => {
 		return res.status(CREATED_STATUS).json({ token, localUser });
 	}
 
-	const user = {
+	const payload = {
+		_id: matchedUser._id,
 		userName: matchedUser.userName,
 		socialId: matchedUser.socialId,
 		wallets: matchedUser.wallets,
 	};
 
 	// Generate token
-	const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+	const token = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);
 
 	// Generate user for local
 	const localUser = { userName: matchedUser.userName };
@@ -133,10 +140,13 @@ module.exports.google = async (req, res) => {
 			socialId: userId,
 			wallets: [],
 		};
-		User.create(user);
+
+		// Get _id from createdUser to generate payload
+		const { _id } = await User.create(user);
 
 		// Generate token
-		const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+		const payload = { _id, ...user };
+		const token = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);
 
 		// Generate user for local
 		const localUser = { email, userName };
@@ -144,7 +154,8 @@ module.exports.google = async (req, res) => {
 		return res.status(CREATED_STATUS).json({ token, localUser });
 	}
 
-	const user = {
+	const payload = {
+		_id: matchedUser._id,
 		email: matchedUser.email,
 		userName: matchedUser.userName,
 		socialId: matchedUser.socialId,
@@ -152,7 +163,7 @@ module.exports.google = async (req, res) => {
 	};
 
 	// Generate token
-	const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+	const token = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);
 
 	// Generate user for local
 	const localUser = {
