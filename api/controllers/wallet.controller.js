@@ -12,9 +12,8 @@ module.exports.index = async (req, res) => {
 	const wallets = await Wallet.find({ owner: _id });
 
 	if (!wallets) {
-		res.status(NOT_FOUND_STATUS).send('Wallet not found');
-		return;
+		return res.status(NOT_FOUND_STATUS).send('Wallet not found');
 	}
 
-	res.status(OK_STATUS).send(wallets);
+	return res.status(OK_STATUS).send(wallets);
 };
