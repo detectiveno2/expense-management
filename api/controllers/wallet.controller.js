@@ -46,7 +46,13 @@ module.exports.addWallet = async (req, res) => {
 	await Wallet.insertMany(newWallet);
 
 	// find the wallet just created
-	const wallet = await Wallet.find({ walletName });
+	const wallet = await Wallet.find({ $and: [
+		{
+			walletName
+		}, {
+			owner: _id
+		}
+	] });
 
 	await User.updateMany(
 		{
