@@ -5,6 +5,7 @@ const {
 	OK_STATUS,
 	NOT_FOUND_STATUS,
 	CREATED_STATUS,
+	BAD_REQUEST_STATUS,
 } = require('../constants/httpStatus.constant');
 
 module.exports.index = async (req, res) => {
@@ -26,6 +27,15 @@ module.exports.addWallet = async (req, res) => {
 	const { walletName } = req.body;
 	const { _id } = req.user;
 
+	// Check if the wallet is available
+	const user = await User.findOne({ _id });
+	const checkWallet = user.wallets.filter(
+		(wallet) => wallet.walletName === walletName
+	);
+	if (checkWallet.length > 0) {
+		return res.status(BAD_REQUEST_STATUS).send('Wallet has already exists');
+	}
+
 	const newWallet = {
 		walletName,
 		owner: _id,
@@ -44,7 +54,7 @@ module.exports.addWallet = async (req, res) => {
 		},
 		{
 			$push: {
-				wallets: wallet,
+				wallets: { _id: wallet._id, walletName: wallet.walletName },
 			},
 		}
 	);

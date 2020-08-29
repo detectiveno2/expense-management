@@ -15,7 +15,7 @@ const walletSchema = new Schema({
 			expenses: [
 				{
 					expense: { type: Number, required: true },
-					income: { type: Number, required: true },
+					isIncome: { type: Boolean, required: true },
 					title: String,
 					description: String,
 				},
