@@ -9,7 +9,7 @@ const userSchema = new Schema({
 	socialId: String,
 	wallets: [
 		{
-			id: { type: Schema.Types.ObjectId, ref: 'Wallet' },
+			_id: { type: Schema.Types.ObjectId, ref: 'Wallet' },
 			walletName: { type: String, required: true },
 		},
 	],
