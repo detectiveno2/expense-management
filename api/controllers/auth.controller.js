@@ -173,3 +173,31 @@ module.exports.google = async (req, res) => {
 
 	return res.status(OK_STATUS).json({ token, localUser });
 };
+
+module.exports.changePassword = async (req, res) => {
+	const { _id, password } = req.user;
+	const { currentPassword, newPassword } = req.body;
+
+	// Check current password.
+	const result = await bcrypt.compare(currentPassword, password);
+	if (!result) {
+		return res
+			.status(BAD_REQUEST_STATUS)
+			.send('current password is incorrect.');
+	}
+
+	// Hash new password
+	const saltRounds = 10;
+	const salt = await bcrypt.genSalt(saltRounds);
+	const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+	// Set password
+	const user = await User.findOne({ _id });
+	await user.updateOne({ $set: { password: hashedPassword } });
+
+	// Generate new token
+	const payload = { ...req.user, password: hashedPassword };
+	const newToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);
+
+	return res.status(OK_STATUS).json({ newToken });
+};
