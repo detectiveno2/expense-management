@@ -29,9 +29,11 @@ module.exports.addWallet = async (req, res) => {
 
 	// Check if the wallet is available
 	const user = await User.findOne({ _id });
+
 	const checkWallet = user.wallets.filter(
 		(wallet) => wallet.walletName === walletName
 	);
+
 	if (checkWallet.length > 0) {
 		return res.status(BAD_REQUEST_STATUS).send('Wallet has already exists');
 	}
@@ -46,13 +48,16 @@ module.exports.addWallet = async (req, res) => {
 	await Wallet.insertMany(newWallet);
 
 	// find the wallet just created
-	const wallet = await Wallet.find({ $and: [
-		{
-			walletName
-		}, {
-			owner: _id
-		}
-	] });
+	const wallet = await Wallet.findOne({
+		$and: [
+			{
+				walletName,
+			},
+			{
+				owner: _id,
+			},
+		],
+	});
 
 	await User.updateMany(
 		{
