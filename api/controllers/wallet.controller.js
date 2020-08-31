@@ -9,18 +9,15 @@ const {
 } = require('../constants/httpStatus.constant');
 
 module.exports.index = async (req, res) => {
-	const { user } = req;
+	const { _id } = req.user;
 
-	const ownerOfWallet = await User.find({ email: user.email });
+	const wallets = await Wallet.find({ owner: _id });
 
-	const wallet = await Wallet.find({ owner: ownerOfWallet._id });
-
-	if (!wallet) {
-		res.status(NOT_FOUND_STATUS).send('Wallet not found');
-		return;
+	if (!wallets) {
+		return res.status(NOT_FOUND_STATUS).send('Wallet not found');
 	}
 
-	res.status(OK_STATUS).send(wallet);
+	return res.status(OK_STATUS).send(wallets);
 };
 
 module.exports.addWallet = async (req, res) => {
