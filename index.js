@@ -20,6 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 // Api route.
 const apiAuthRoute = require('./api/routes/auth.route');
 const apiWalletRoute = require('./api/routes/wallet.route');
+const apiExpenseRoute = require('./api/routes/expense.route');
 
 // Auth middleware
 const authMiddleWare = require('./api/middlewares/auth.middleware');
@@ -27,6 +28,7 @@ const authMiddleWare = require('./api/middlewares/auth.middleware');
 // Define route api.
 app.use('/api/auth', apiAuthRoute);
 app.use('/api/wallet', authMiddleWare.checkAuth, apiWalletRoute);
+app.use('/api/expense', authMiddleWare.checkAuth, apiExpenseRoute);
 
 app.get('/', (req, res) => {
 	res.send('Hello Ha Tien va Thuy Dung');
