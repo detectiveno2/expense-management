@@ -7,11 +7,19 @@ const walletSchema = new Schema({
 	owner: { type: Schema.Types.ObjectId, ref: 'User' },
 	transactions: [
 		{
-			expense: { type: Number, required: true },
-			isIncome: { type: Boolean, required: true },
-			date: { type: Date, required: true, default: Date.now },
-			title: String,
-			description: String,
+			date: {
+				type: Date,
+				require: true,
+				default: Date.now,
+			},
+			expenses: [
+				{
+					expense: { type: Number, required: true },
+					isIncome: { type: Boolean, required: true },
+					title: String,
+					description: String,
+				},
+			],
 		},
 	],
 	accountBalance: { type: Number, default: 0 },
