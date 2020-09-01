@@ -42,11 +42,13 @@ module.exports.addExpense = async (req, res) => {
 			},
 			{
 				$push: {
-					['transaction.$.expenses']: {
-						expense,
-						isIncome,
-						title,
-						description,
+					transactions: {
+						expenses: {
+							expense,
+							isIncome,
+							title,
+							description,
+						},
 					},
 				},
 			}
