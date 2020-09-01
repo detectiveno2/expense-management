@@ -1,6 +1,7 @@
-const Wallet = require('../models/wallet.model');
-
 const moment = require('moment');
+
+const Wallet = require('../models/wallet.model');
+const { CREATED_STATUS } = require('../constants/httpStatus.constant');
 
 module.exports.addExpense = async (req, res) => {
 	const { date, expense, isIncome, title, description, walletName } = req.body;
@@ -11,10 +12,13 @@ module.exports.addExpense = async (req, res) => {
 	const wallet = await Wallet.findOne({
 		$and: [{ walletName }, { owner: _id }],
 	});
+
 	const transactionIndex = wallet.transactions.findIndex(
 		(obj) => moment(obj.date).format('MMMM Do YYYY') === now
 	);
 
+	const currentAccountBalance = wallet.accountBalance;
+	const newExpense = (isIncome && expense) || -expense;
 	let transaction;
 
 	// if transaction on the same day
@@ -32,11 +36,14 @@ module.exports.addExpense = async (req, res) => {
 			{
 				$push: {
 					['transactions.$.expenses']: {
-						expense,
+						expense: newExpense,
 						isIncome,
 						title,
 						description,
 					},
+				},
+				$set: {
+					accountBalance: currentAccountBalance + newExpense,
 				},
 			}
 		);
@@ -50,19 +57,24 @@ module.exports.addExpense = async (req, res) => {
 					transactions: {
 						date,
 						expenses: {
-							expense,
+							expense: newExpense,
 							isIncome,
 							title,
 							description,
 						},
 					},
 				},
+				$set: {
+					accountBalance: currentAccountBalance + newExpense,
+				},
 			}
 		);
+
+	await Wallet.updateOne({});
 
 	const newData = await Wallet.findOne({
 		$and: [{ walletName }, { owner: _id }],
 	});
 
-	return res.json(newData);
+	return res.status(CREATED_STATUS).send(newData);
 };
