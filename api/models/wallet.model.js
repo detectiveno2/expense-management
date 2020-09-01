@@ -7,7 +7,6 @@ const walletSchema = new Schema({
 	owner: { type: Schema.Types.ObjectId, ref: 'User' },
 	transactions: [
 		{
-			_id: Schema.Types.ObjectId,
 			date: {
 				type: Date,
 				require: true,
