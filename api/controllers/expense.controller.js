@@ -1,5 +1,80 @@
-module.exports.addExpense = async (req, res) => {
-	// const date = new Date(req.body.date);
+const moment = require('moment');
 
-	return res.json('hey');
+const Wallet = require('../models/wallet.model');
+const { CREATED_STATUS } = require('../constants/httpStatus.constant');
+
+module.exports.addExpense = async (req, res) => {
+	const { date, expense, isIncome, title, description, walletName } = req.body;
+	const { _id } = req.user;
+	const now = moment(date).format('MMMM Do YYYY');
+
+	// Find transactions with the same date
+	const wallet = await Wallet.findOne({
+		$and: [{ walletName }, { owner: _id }],
+	});
+
+	const transactionIndex = wallet.transactions.findIndex(
+		(obj) => moment(obj.date).format('MMMM Do YYYY') === now
+	);
+
+	const currentAccountBalance = wallet.accountBalance;
+	const newExpense = (isIncome && expense) || -expense;
+	let transaction;
+
+	// if transaction on the same day
+	if (transactionIndex !== -1) {
+		transaction = wallet.transactions[transactionIndex];
+		await Wallet.updateOne(
+			{
+				$and: [{ walletName }, { owner: _id }],
+				transactions: {
+					$elemMatch: {
+						_id: transaction._id,
+					},
+				},
+			},
+			{
+				$push: {
+					['transactions.$.expenses']: {
+						expense: newExpense,
+						isIncome,
+						title,
+						description,
+					},
+				},
+				$set: {
+					accountBalance: currentAccountBalance + newExpense,
+				},
+			}
+		);
+	} else
+		await Wallet.updateOne(
+			{
+				$and: [{ walletName }, { owner: _id }],
+			},
+			{
+				$push: {
+					transactions: {
+						date,
+						expenses: {
+							expense: newExpense,
+							isIncome,
+							title,
+							description,
+						},
+					},
+				},
+				$set: {
+					accountBalance: currentAccountBalance + newExpense,
+				},
+			}
+		);
+
+	await Wallet.updateOne({});
+
+	const newData = await Wallet.findOne({
+		$and: [{ walletName }, { owner: _id }],
+	});
+
+	return res.status(CREATED_STATUS).send(newData);
 };
