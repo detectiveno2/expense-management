@@ -2,6 +2,11 @@ const moment = require('moment');
 
 const Wallet = require('../models/wallet.model');
 const { CREATED_STATUS } = require('../constants/httpStatus.constant');
+const {
+	getTotalVirtualWallet,
+	updateVirtualTransactions,
+	getTransactionsVirtualWallet,
+} = require('../helper/helper');
 
 module.exports.addExpense = async (req, res) => {
 	const { date, expense, isIncome, title, description, walletName } = req.body;
@@ -76,5 +81,16 @@ module.exports.addExpense = async (req, res) => {
 		$and: [{ walletName }, { owner: _id }],
 	});
 
-	return res.status(CREATED_STATUS).send(newData);
+	//get wallets
+	const wallets = await Wallet.find({ owner: _id });
+
+	//generate virtual wallet
+	const virtualWallet = {
+		accountBalance: getTotalVirtualWallet(wallets),
+		owner: _id,
+		walletName: 'Tổng cộng',
+		transactions: getTransactionsVirtualWallet(wallets),
+	};
+
+	return res.status(CREATED_STATUS).send({ newData, virtualWallet });
 };
