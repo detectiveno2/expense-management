@@ -59,7 +59,7 @@ module.exports.index = async (req, res) => {
 	const virtualWallet = {
 		accountBalance: getTotalVirtualWallet(wallets),
 		owner: _id,
-		walletName: 'Virtual wallet',
+		walletName: 'Tổng cộng',
 		transactions: getTransactionsVirtualWallet(wallets),
 	};
 
