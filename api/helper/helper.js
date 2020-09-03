@@ -1,5 +1,7 @@
+const moment = require('moment');
+
 //virtual wallet
-module.exports.getTotalVirtualWallet = (wallets) => {
+const getTotalVirtualWallet = (wallets) => {
 	const total = wallets.reduce(
 		(currentTotal, wallet) => currentTotal + wallet.accountBalance,
 		0
@@ -8,7 +10,7 @@ module.exports.getTotalVirtualWallet = (wallets) => {
 	return total;
 };
 
-module.exports.updateVirtualTransactions = (transactions, transaction) => {
+const updateVirtualTransactions = (transactions, transaction) => {
 	const now = moment(transaction.date).format('MMMM Do YYYY');
 
 	const transactionIndex = transactions.findIndex(
@@ -24,7 +26,7 @@ module.exports.updateVirtualTransactions = (transactions, transaction) => {
 	}
 };
 
-module.exports.getTransactionsVirtualWallet = (wallets) => {
+const getTransactionsVirtualWallet = (wallets) => {
 	const transactions = wallets.reduce((currentTransactions, wallet) => {
 		wallet.transactions.forEach((transaction) => {
 			updateVirtualTransactions(currentTransactions, transaction);
@@ -33,4 +35,10 @@ module.exports.getTransactionsVirtualWallet = (wallets) => {
 	}, []);
 
 	return transactions;
+};
+
+module.exports = {
+	getTotalVirtualWallet,
+	updateVirtualTransactions,
+	getTransactionsVirtualWallet,
 };
