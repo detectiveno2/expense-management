@@ -1,3 +1,5 @@
+const moment = require('moment');
+
 const Wallet = require('../models/wallet.model');
 const User = require('../models/user.model');
 
@@ -8,6 +10,42 @@ const {
 	BAD_REQUEST_STATUS,
 } = require('../constants/httpStatus.constant');
 
+const getTotalVirtualWallet = (wallets) => {
+	const total = wallets.reduce(
+		(currentTotal, wallet) => currentTotal + wallet.accountBalance,
+		0
+	);
+
+	return total;
+};
+
+const updateVirtualTransactions = (transactions, transaction) => {
+	const now = moment(transaction.date).format('MMMM Do YYYY');
+
+	const transactionIndex = transactions.findIndex(
+		(obj) => moment(obj.date).format('MMMM Do YYYY') === now
+	);
+
+	if (transactionIndex !== -1) {
+		transactions[transactionIndex].expenses = transactions[
+			transactionIndex
+		].expenses.concat(transaction.expenses);
+	} else {
+		transactions.push(transaction);
+	}
+};
+
+const getTransactionsVirtualWallet = (wallets) => {
+	const transactions = wallets.reduce((currentTransactions, wallet) => {
+		wallet.transactions.forEach((transaction) => {
+			updateVirtualTransactions(currentTransactions, transaction);
+		});
+		return currentTransactions;
+	}, []);
+
+	return transactions;
+};
+
 module.exports.index = async (req, res) => {
 	const { _id } = req.user;
 
@@ -17,7 +55,15 @@ module.exports.index = async (req, res) => {
 		return res.status(NOT_FOUND_STATUS).send('Wallet not found');
 	}
 
-	return res.status(OK_STATUS).send(wallets);
+	//generate virtual wallet
+	const virtualWallet = {
+		accountBalance: getTotalVirtualWallet(wallets),
+		owner: _id,
+		walletName: 'Virtual wallet',
+		transactions: getTransactionsVirtualWallet(wallets),
+	};
+
+	return res.status(OK_STATUS).send({ wallets, virtualWallet });
 };
 
 module.exports.addWallet = async (req, res) => {
