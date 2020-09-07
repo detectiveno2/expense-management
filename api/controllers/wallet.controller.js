@@ -1,5 +1,3 @@
-const moment = require('moment');
-
 const Wallet = require('../models/wallet.model');
 const User = require('../models/user.model');
 
@@ -12,7 +10,6 @@ const {
 
 const {
 	getTotalVirtualWallet,
-	updateVirtualTransactions,
 	getTransactionsVirtualWallet,
 } = require('../helper/helper');
 
