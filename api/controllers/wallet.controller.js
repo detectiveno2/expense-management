@@ -83,3 +83,19 @@ module.exports.addWallet = async (req, res) => {
 
 	res.status(CREATED_STATUS).send(wallet);
 };
+
+module.exports.updateWalletName = async (req, res) => {
+	const { walletName, newWalletName } = req.body;
+
+	// Find wallet that needs updating.
+	const updatingWallet = await Wallet.findOne({ walletName });
+	if (!updatingWallet) {
+		return res.status(NOT_FOUND_STATUS).send('wallet is not existed.');
+	}
+
+	await updatingWallet.updateOne({ $set: { walletName: newWalletName } });
+
+	const updatedWallet = await Wallet.findOne({ walletName: newWalletName });
+
+	return res.status(OK_STATUS).json({ updatedWallet });
+};
