@@ -6,6 +6,7 @@ const {
 	NOT_FOUND_STATUS,
 	CREATED_STATUS,
 	BAD_REQUEST_STATUS,
+	NO_CONTENT_STATUS,
 } = require('../constants/httpStatus.constant');
 
 const {
@@ -98,4 +99,21 @@ module.exports.updateWalletName = async (req, res) => {
 	const updatedWallet = await Wallet.findOne({ walletName: newWalletName });
 
 	return res.status(OK_STATUS).json({ updatedWallet });
+};
+
+module.exports.deleteWallet = async (req, res) => {
+	const { _id } = req.user;
+	const { idWallet } = req.params;
+
+	try {
+		await Wallet.deleteOne({ _id: idWallet });
+	} catch (error) {
+		return res.status(NOT_FOUND_STATUS).send('wallet is not existed.');
+	}
+
+	// Update wallets field in user.
+	const user = await User.findOne({ _id });
+	await user.updateOne({ $pull: { wallets: { _id: idWallet } } });
+
+	return res.sendStatus(NO_CONTENT_STATUS);
 };
