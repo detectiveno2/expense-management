@@ -12,6 +12,7 @@ const {
 	getTotalVirtualWallet,
 	getTransactionsVirtualWallet,
 } = require('../helper/helper');
+const { findOne } = require('../models/wallet.model');
 
 module.exports.index = async (req, res) => {
 	const { _id } = req.user;
@@ -85,6 +86,7 @@ module.exports.addWallet = async (req, res) => {
 };
 
 module.exports.updateWalletName = async (req, res) => {
+	const { _id } = req.user;
 	const { walletName, newWalletName } = req.body;
 
 	// Find wallet that needs updating.
@@ -93,7 +95,16 @@ module.exports.updateWalletName = async (req, res) => {
 		return res.status(NOT_FOUND_STATUS).send('wallet is not existed.');
 	}
 
+	// update field.
+	const user = await User.findOne({ _id });
 	await updatingWallet.updateOne({ $set: { walletName: newWalletName } });
+	await user.updateOne({
+		$set: {
+			[`wallets.${user.wallets.findIndex(
+				(wallet) => wallet.walletName === walletName
+			)}.walletName`]: newWalletName,
+		},
+	});
 
 	const updatedWallet = await Wallet.findOne({ walletName: newWalletName });
 
