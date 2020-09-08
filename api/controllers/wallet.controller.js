@@ -12,7 +12,6 @@ const {
 	getTotalVirtualWallet,
 	getTransactionsVirtualWallet,
 } = require('../helper/helper');
-const { findOne } = require('../models/wallet.model');
 
 module.exports.index = async (req, res) => {
 	const { _id } = req.user;
