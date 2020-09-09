@@ -1,5 +1,3 @@
-const moment = require('moment');
-
 const Wallet = require('../models/wallet.model');
 const User = require('../models/user.model');
 
@@ -12,7 +10,6 @@ const {
 
 const {
 	getTotalVirtualWallet,
-	updateVirtualTransactions,
 	getTransactionsVirtualWallet,
 } = require('../helper/helper');
 
@@ -37,7 +34,7 @@ module.exports.index = async (req, res) => {
 };
 
 module.exports.addWallet = async (req, res) => {
-	const { walletName } = req.body;
+	const { walletName, accountBalance } = req.body;
 	const { _id } = req.user;
 
 	// Check if the wallet is available
@@ -55,6 +52,7 @@ module.exports.addWallet = async (req, res) => {
 		walletName,
 		owner: _id,
 		transactions: [],
+		accountBalance,
 	};
 
 	// insert new wallet
