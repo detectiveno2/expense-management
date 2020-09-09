@@ -82,7 +82,16 @@ module.exports.addWallet = async (req, res) => {
 		}
 	);
 
-	res.status(CREATED_STATUS).send(wallet);
+	//generate virtual wallet
+	const wallets = await Wallet.find({ owner: _id });
+	const virtualWallet = {
+		accountBalance: getTotalVirtualWallet(wallets),
+		owner: _id,
+		walletName: 'Tổng cộng',
+		transactions: getTransactionsVirtualWallet(wallets),
+	};
+
+	return res.status(CREATED_STATUS).json({ wallet, virtualWallet });
 };
 
 module.exports.updateWalletName = async (req, res) => {
