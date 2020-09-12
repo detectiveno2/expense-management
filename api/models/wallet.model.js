@@ -18,6 +18,7 @@ const walletSchema = new Schema({
 					isIncome: { type: Boolean, required: true },
 					title: String,
 					description: String,
+					isShowReport: { type: Boolean, default: true },
 				},
 			],
 		},
