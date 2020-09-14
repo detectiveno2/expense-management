@@ -7,7 +7,6 @@ const {
 	NOT_FOUND_STATUS,
 	CREATED_STATUS,
 	BAD_REQUEST_STATUS,
-	NO_CONTENT_STATUS,
 } = require('../constants/httpStatus.constant');
 
 const {
@@ -135,7 +134,16 @@ module.exports.deleteWallet = async (req, res) => {
 	const user = await User.findOne({ _id });
 	await user.updateOne({ $pull: { wallets: { _id: idWallet } } });
 
-	return res.sendStatus(NO_CONTENT_STATUS);
+	//generate virtual wallet
+	const wallets = await Wallet.find({ owner: _id });
+	const virtualWallet = {
+		accountBalance: getTotalVirtualWallet(wallets),
+		owner: _id,
+		walletName: 'Tổng cộng',
+		transactions: getTransactionsVirtualWallet(wallets),
+	};
+
+	return res.status(OK_STATUS).json({ wallets, virtualWallet });
 };
 
 module.exports.updateBalance = async (req, res) => {
