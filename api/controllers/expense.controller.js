@@ -94,3 +94,19 @@ module.exports.addExpense = async (req, res) => {
 
 	return res.status(CREATED_STATUS).send({ newData, virtualWallet });
 };
+
+module.exports.updateExpense = async (req, res) => {
+	res.json('hey');
+};
+
+module.exports.deleteExpense = async (req, res) => {
+	const { expenseId } = req.params;
+
+	const wallet = await Wallet.findOne({
+		['transactions.expenses._id']: expenseId,
+	});
+
+	console.log(wallet);
+
+	res.json(wallet);
+};
