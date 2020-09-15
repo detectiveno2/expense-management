@@ -139,7 +139,15 @@ module.exports.deleteWallet = async (req, res) => {
 };
 
 module.exports.updateBalance = async (req, res) => {
-	const { date, expense, isIncome, title, walletName, isShowReport } = req.body;
+	const {
+		date,
+		expense,
+		isIncome,
+		title,
+		walletName,
+		description,
+		isShowReport,
+	} = req.body;
 	const { _id } = req.user;
 	const now = moment(date).format('MMMM Do YYYY');
 
@@ -174,6 +182,7 @@ module.exports.updateBalance = async (req, res) => {
 						expense: newExpense,
 						isIncome,
 						title,
+						description,
 						isShowReport,
 					},
 				},
@@ -195,6 +204,7 @@ module.exports.updateBalance = async (req, res) => {
 							expense: newExpense,
 							isIncome,
 							title,
+							description,
 							isShowReport,
 						},
 					},
